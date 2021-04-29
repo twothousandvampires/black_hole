@@ -35,6 +35,17 @@ export class Input{
                 case 84:
                     this.inputs.t = true
                     break;
+                case 87:
+                    this.inputs.w = true
+                case 83:
+                    this.inputs.s = true
+                    break
+                case 65:
+                    this.inputs.a = true
+                    break
+                case 68:
+                    this.inputs.d = true
+                    break
             }
         })
         document.addEventListener(('keyup'), e=>{
@@ -44,7 +55,18 @@ export class Input{
                     break
                 case 84:
                     this.inputs.t = false
-                    break;
+                    break
+                case 97:
+                    this.inputs.w = false
+                case 83:
+                    this.inputs.s = false
+                    break
+                case 65:
+                    this.inputs.a = false
+                    break
+                case 68:
+                    this.inputs.d = false
+                    break
             }
         })
     }
