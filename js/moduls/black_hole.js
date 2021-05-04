@@ -3,7 +3,7 @@ export class Blackhole{
     constructor(pos) {
         this.pos = pos
         this.radius = 30
-        this.radius_of_influence = 280
+        this.radius_of_influence = 80
         this.power  = 1
         this.image = new Image()
         this.image.src = './resources/img/border.png'

@@ -6,7 +6,11 @@ import { Render } from '../moduls/render_module.js'
 export class GameEngine{
 
     constructor(){
-
+        this.timer = 0
+        setInterval(()=>{
+            this.timer ++
+        },1000)
+        this.asteroid_create_speed = 5
         this.render = new Render()
         this.player = new Player(this.render)
         this.black_hole = new Blackhole({x:450, y: 450})
@@ -68,8 +72,12 @@ export class GameEngine{
     start(){
 
         setInterval(()=>{
-            this.createAsteroid()
-        },100)
+            if(this.timer % 5 === 0){
+                this.createAsteroid()
+                console.log('!')
+            }
+
+        },1000)
           
       
         setInterval(()=>{
