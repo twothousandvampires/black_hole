@@ -3,11 +3,16 @@ export class Input{
         'm_left' : false,
         'm_right'  : false,
         'e' : false,
-        't' : false
+        't' : false,
+        "m_pos_x" : undefined,
+        "m_pos_y" : undefined
+
     }
     constructor(){
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener( 'mousedown', e=>{
+            this.inputs.m_pos_x = e.offsetX
+            this.inputs.m_pos_y = e.offsetY
             switch (e.which){
                 case 1:
                     this.inputs.m_left = true
@@ -37,6 +42,7 @@ export class Input{
                     break;
                 case 87:
                     this.inputs.w = true
+                    break
                 case 83:
                     this.inputs.s = true
                     break
@@ -56,8 +62,9 @@ export class Input{
                 case 84:
                     this.inputs.t = false
                     break
-                case 97:
+                case 87:
                     this.inputs.w = false
+                    break
                 case 83:
                     this.inputs.s = false
                     break
@@ -71,6 +78,12 @@ export class Input{
         })
     }
     getInput(){
-        return this.inputs
+        let flag;
+        for(let key in this.inputs){
+            if (this.inputs[key] === true){
+                flag = true;
+            }
+        }
+        return flag  ? this.inputs : false
     }
 }
