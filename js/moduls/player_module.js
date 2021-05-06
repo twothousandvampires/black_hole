@@ -1,7 +1,7 @@
 import  { Input } from "./input_module.js";
 import { GameFunctions } from "./game_functions.js"
 import { Projectile } from "./projectile_module.js"
-
+import  { Skill } from "./skill_module.js";
 
 export class Player{
     constructor(render) {
@@ -14,6 +14,8 @@ export class Player{
             "x" : 0,
             "y" : 0
         }
+        this.imune = false
+        this.cd_redaction = 0
         this.speed = 3
         this.mass = 10
         this.width = 30
@@ -23,17 +25,22 @@ export class Player{
         this.acceleration_step = 0.02
         this.damaged = false
         this.projectiles = []
-        this.r_click_item = 'fire_ball'
-        this.l_click_item = 'gravity'
+        this.l_click_item = new Skill(this, 'gravinado', this.render)
+        this.r_click_item = undefined
+        this.can_be_gravitate = true
     }
-
+    getImune(time){
+        this.imune = true
+        setTimeout(()=>{
+            this.imune = false
+        } ,time * 1000)
+    }
     act(bh , ast){
         let input = this.input.getInput()
 
         this.projectiles.forEach( elem => {
             elem.act(ast, bh)
         })
-        
         if(input.m_left){
             this.left_click(input)
         }
@@ -93,7 +100,7 @@ export class Player{
         x_movie = this.acceleration.x
         y_movie = this.acceleration.y
 
-        if(bh.intersectPlayer(this)){
+        if(bh.intersectPlayer(this) && this.can_be_gravitate){
             
             let distance_to_event = bh.distanceToEvent(this)
             let power = distance_to_event/bh.radius_of_influence
@@ -116,8 +123,8 @@ export class Player{
             y_movie += ym/(this.mass/10)
 
             
-            this.pos.x += x_movie * this.speed
-            this.pos.y += y_movie * this.speed
+            this.pos.x += x_movie * (this.speed + (bh.power * (1-power)))
+            this.pos.y += y_movie * (this.speed + (bh.power * (1-power)))
         }
         else {
             this.pos.x += x_movie * this.speed
@@ -135,9 +142,7 @@ export class Player{
             (thisDistanceY - this.height/2)^2;
         
             if(cornerDistance_sq <= (element.r^2) || thisDistanceX <= (this.width/2) || thisDistanceY <= (this.height/2)){
-                if(!this.damaged){
-                    console.log("!!!!")
-                    this.color = 'yellow'
+                if(!this.damaged && !this.imune){
                     this.damaged = true
                     
                     let angle = GameFunctions.angle(element, this)
@@ -155,28 +160,10 @@ export class Player{
         });
     }
     left_click(input){
-        switch(this.l_click_item){
-            case 'gravity':
-            let angle = GameFunctions.angle(this, { pos : { "x" : input.m_pos_x, "y" : input.m_pos_y}})
-            let new_proj = new Projectile(this, {'x' : this.pos.x, "y" : this.pos.y},angle,'gravity')          
-            this.projectiles.push(new_proj)
-            setTimeout(() => {
-                this.deleteProj(new_proj)
-            }, 10000)
-                break;
-        }
+        this.l_click_item.do(input , this)
     }
     right_click(input){
-        switch(this.r_click_item){
-            case 'fire_ball':
-                let angle = GameFunctions.angle(this, { pos : { "x" : input.m_pos_x, "y" : input.m_pos_y}})
-                let new_proj = new Projectile(this, {'x' : this.pos.x, "y" : this.pos.y},angle,'fire')
-                this.projectiles.push(new_proj)
-                setTimeout(() => {
-                this.deleteProj(new_proj)
-            }, 10000)
-                break; 
-        }
+        this.r_click_item.do(input , this)
     }
     deleteProj(item){
         this.projectiles = this.projectiles.filter( elem => {            

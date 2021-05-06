@@ -1,9 +1,11 @@
+import { GameFunctions } from "./game_functions.js"
+
 export class Blackhole{
 
     constructor(pos) {
         this.pos = pos
         this.radius = 30
-        this.radius_of_influence = 80
+        this.radius_of_influence = 120
         this.power  = 1
         this.image = new Image()
         this.image.src = './resources/img/border.png'
@@ -26,9 +28,15 @@ export class Blackhole{
         return Math.floor(Math.sqrt(((this.pos.x - item.pos.x) ** 2) + ((this.pos.y - item.pos.y) ** 2)));
     }
     grow(mass){
-        this.radius += mass/100
-        this.radius_of_influence += mass/150
-        this.power += mass/2000
+        console.log("!")
+        this.radius = GameFunctions.fixNum(this.radius + mass/90)
+        this.radius_of_influence = GameFunctions.fixNum(this.radius_of_influence + mass/120)
+        this.power = GameFunctions.fixNum(this.power + mass/2500)
+    }
+    reduce(mass){
+        this.radius = GameFunctions.fixNum( this.radius - mass/50)
+        this.radius_of_influence = GameFunctions.fixNum(this.radius_of_influence - mass/80)
+        this.power = GameFunctions.fixNum(this.power - mass/1800)
     }
     calcAngle(item)
     {

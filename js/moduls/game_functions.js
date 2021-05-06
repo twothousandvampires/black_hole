@@ -27,8 +27,10 @@ export class GameFunctions{
     }
 
     static drawPoint( item , color ){
-        
         ctx.fillStyle = color
         ctx.fillRect( item.pos.x-1 , item.pos.y-1 , 2 , 2 )
+    }
+    static fixNum(num){
+        return +num.toFixed(2)
     }
 }

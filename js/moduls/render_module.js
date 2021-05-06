@@ -1,6 +1,7 @@
 export class Render{
 
-    constructor() {        
+    constructor(engine) {
+        this.engine = engine        
         this.canvas = document.getElementById('cnv')
         this.ctx = this.canvas.getContext('2d')
         this.background_image_pull = [
@@ -10,6 +11,16 @@ export class Render{
         this.background_image = new Image()
         this.background_image.src = this.background_image_pull[Math.floor(Math.random() * this.background_image_pull.length)]
         this.effects = []
+        this.timer_info = document.getElementById('timer')
+        this.bh_power_info = document.getElementById('bh-power')
+        this.bh_radius_info = document.getElementById('bh-radius')
+        this.bh_influence_info = document.getElementById('bh-influence')
+
+        this.l_skill_name = document.getElementById('skill-bar-left-name')
+        this.r_skill_name = document.getElementById('skill-bar-right-name')
+
+        this.l_skill_sign = document.getElementById('skill-bar-left-sign')
+        this.r_skill_sign = document.getElementById('skill-bar-right-sign')
     }
     deleteEffect(item){
         this.effects = this.effects.filter( elem => {
@@ -30,6 +41,20 @@ export class Render{
         this.drawPlayer(player)
         this.drawProjectiles(player.projectiles)
         this.drawEffects(bh)
+        this.pushInfo()
+    }
+    pushInfo(){
+        
+        this.l_skill_name.innerText = this.engine.player.l_click_item.name
+        this.r_skill_name.innerText = this.engine.player.r_click_item.name
+
+        this.l_skill_sign.style.backgroundColor = this.engine.player.l_click_item.avalaible ? 'green' : 'red'
+        this.r_skill_sign.style.backgroundColor = this.engine.player.r_click_item.avalaible ? 'green' : 'red'
+
+        this.timer_info.innerText = `timer : ` + this.engine.timer
+        this.bh_power_info.innerText = `bh power : ` + this.engine.black_hole.power
+        this.bh_radius_info.innerText = `bh radius : ` + this.engine.black_hole.radius
+        this.bh_influence_info.innerText = `bh influence : ` + this.engine.black_hole.radius_of_influence
     }
     drawEffects(bh){
         for(let i = 0;i < this.effects.length; i++){
@@ -67,11 +92,14 @@ export class Render{
     }
     drawAsteroids(array){          
         array.forEach( elem => {
-            this.ctx.translate(elem.pos.x, elem.pos.y);
-            this.ctx.rotate(-elem.angle);
-            this.ctx.drawImage(elem.image, 40 * elem.frame, 0 ,40,40,- elem.r , - elem.r , elem.r * 2 , elem.r * 2);
-            this.ctx.rotate(elem.angle);
-            this.ctx.translate(-elem.pos.x, -elem.pos.y);
+
+
+                    this.ctx.translate(elem.pos.x, elem.pos.y);
+                    this.ctx.rotate(-elem.angle);
+                    this.ctx.drawImage(elem.image, 40 * elem.frame, 0 ,40,40,- elem.r , - elem.r , elem.r * 2 , elem.r * 2);
+                    this.ctx.rotate(elem.angle);
+                    this.ctx.translate(-elem.pos.x, -elem.pos.y);
+
         })     
     }
     drawPlayer(item){
@@ -84,16 +112,19 @@ export class Render{
         
         array.forEach( elem => {
             switch ( elem.type){
-                case "fire":
+                case "death comet":
                     this.ctx.translate(elem.pos.x, elem.pos.y);
                     this.ctx.rotate(-elem.angle);
                     this.ctx.drawImage(elem.image, 25 * elem.frame, 0 ,25,25,(- elem.r - elem.draw_offset) / 2, (- elem.r - elem.draw_offset) / 2, elem.r + elem.draw_offset, elem.r + elem.draw_offset);
                     this.ctx.rotate(elem.angle);
                     this.ctx.translate(-elem.pos.x, -elem.pos.y);
                     break;
-                case "gravity":
+                case "gravinado":
                     this.ctx.drawImage(elem.image, 30 * elem.frame, 0 ,30 ,30 , elem.pos.x - elem.r, elem.pos.y - elem.r, elem.r * 2, elem.r * 2)
                     break
+                case 'defend matrix':
+                    this.ctx.drawImage(elem.image, 50 * elem.frame, 0 ,50,50, elem.parrent.pos.x - elem.r , elem.parrent.pos.y - elem.r , elem.r * 2 , elem.r * 2);
+                    break;
 
             }
 

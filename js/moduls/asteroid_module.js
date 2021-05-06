@@ -5,7 +5,10 @@ import {Effect} from "./effect_module.js";
 
 export class Asteroid{
 
-    constructor(parrent ,pos ,angle,mass) {
+    constructor(parrent ,pos ,angle,mass, comet) {
+        if(comet){
+            this.comet = true
+        }
         this.frame_timer = 0
         this.frame = 0
         this.max_frame = 7
@@ -14,12 +17,29 @@ export class Asteroid{
         this.pos = pos
         this.angle = angle
         this.size = mass
-        this.speed = 20/mass
+        if(this.comet){
+            this.speed = 100/mass
+        }
+        else {
+            this.speed = 20/mass
+        }
+
+
         this.image = new Image()
         this.image.src = './resources/img/asteroid.png'
+        if(this.comet){
+            this.image.src = './resources/img/comet.png'
+        }
         this.x_movie = Math.sin(this.angle)
         this.y_movie = Math.cos(this.angle)
-        this.r = mass/2
+        if(this.comet){
+            this.r = mass/5
+        }
+        else {
+            this.r = mass/2
+        }
+
+
         this.damaged = false
     }
     
@@ -35,20 +55,39 @@ export class Asteroid{
 
     }
     move(bh ,astr){
-        this.frame_timer += 0.2
-        if(this.frame_timer > this.mass/30){
-            this.frame++
-            this.frame_timer = 0
-            if(this.frame === this.max_frame){
-                this.frame = 0
+        if(!this.comet){
+            this.frame_timer += 0.2
+            if(this.frame_timer > this.mass/30){
+                this.frame++
+                this.frame_timer = 0
+                if(this.frame === this.max_frame){
+                    this.frame = 0
+                }
+            }
+        }
+        else {
+            this.frame_timer += 0.5
+            if(this.frame_timer > this.mass/300){
+                this.frame++
+                this.frame_timer = 0
+                if(this.frame === this.max_frame){
+                    this.frame = 0
+                }
             }
         }
         if(bh.intersectEvent(this)){
-            let a = GameFunctions.angle(this, bh)
-
-            this.parrent.render.effects.push(new Effect('suction',this.parrent.render ,{ "x" : bh.pos.x - bh.radius, "y" : bh.pos.y - bh.radius} , a))
-            this.parrent.deleteAsteroid(this)
-            bh.grow(this.mass)
+            if(!this.comet){
+                console.log('qwd')
+                let a = GameFunctions.angle(this, bh)
+                this.parrent.render.effects.push(new Effect('suction',this.parrent.render ,{ "x" : bh.pos.x - bh.radius, "y" : bh.pos.y - bh.radius} , a))
+                this.parrent.deleteAsteroid(this)
+                bh.grow(this.mass)
+            }
+            else{
+                console.log('cpmet')
+                this.parrent.deleteAsteroid(this)
+                bh.reduce(this.mass)
+            }
         }
         else if(bh.intersect(this)){
             let distance_to_event = bh.distanceToEvent(this)
@@ -65,20 +104,21 @@ export class Asteroid{
             xm = (xm * (1 - power)) * bh.power
             ym = (ym * (1 - power)) *  bh.power
 
-            this.x_movie += xm/(this.mass * 4)
-
-            this.y_movie += ym/(this.mass * 4)
+            if(!this.comet){
+                this.x_movie += xm/(this.mass * 4)
+                this.y_movie += ym/(this.mass * 4)
+            }
+            else{
+                this.x_movie += xm/(this.mass * 10)
+                this.y_movie += ym/(this.mass * 10)
+            }
 
             let new_angle = GameFunctions.angle(this, { pos : {"x" : this.pos.x + this.x_movie , "y" : this.pos.y + this.y_movie }})
 
             this.angle = new_angle
 
-            // GameFunctions.drawPoint({ pos : {"x" : this.pos.x + x_movie , "y" : this.pos.y + y_movie } }, "yellow")
-            // console.log(GameFunctions.angle(this, { pos : {"x" : this.pos.x + x_movie , "y" : this.pos.y + y_movie }}))
-
-
-            this.pos.x += Math.sin(this.angle) * (this.speed * (1 + (bh.power - power)))
-            this.pos.y += Math.cos(this.angle) * (this.speed * (1 + (bh.power - power)))
+            this.pos.x += Math.sin(this.angle) * (this.speed + (bh.power * (1-power)))
+            this.pos.y += Math.cos(this.angle) * (this.speed + (bh.power * (1-power)))
         }
        
         else {
@@ -88,17 +128,10 @@ export class Asteroid{
         
         for (let i = 0; i < astr.length; i++) {
             const element = astr[i];
-           
             if(GameFunctions.distanceBetweenPoints(this, element) < (this.r + element.r)){
-               
                 if(this != element && !this.damaged){
-
-                    
                     this.changeSpeedFromAstr(element)
-                   
-
                     this.damaged = true
-                    
                     let timer = setInterval(()=>{
                         if(!(GameFunctions.distanceBetweenPoints(this, element) < (this.r + element.r))){
                             this.damaged = false
@@ -106,10 +139,7 @@ export class Asteroid{
                         }                       
                     },100)
                 }
-                
-                
             }
-            
         }
     }
     changeSpeedFromHit(element){
@@ -124,7 +154,6 @@ export class Asteroid{
                 "y": element.acceleration.y,
             }
         }
-        
         let angle = GameFunctions.angle(element, this)
 
         this.angle = angle
@@ -133,14 +162,22 @@ export class Asteroid{
     }
     
     changeSpeedFromAstr(element){
-        
-        let hit_angle = this.angle - element.angle 
-       
-        
-        this.angle -= hit_angle 
-        element.angle += hit_angle 
-        element.reset()
+        if(!this.comet){
+            let hit_angle = this.angle - element.angle
+            this.angle -= hit_angle
+            if(!element.comet){
+                element.angle += hit_angle
+                element.reset()
+            }
+            this.reset()
+        }
+        else {
+            if(!element.comet){
+                let hit_angle = this.angle - element.angle
+                element.angle += hit_angle
+                element.reset()
+            }
 
-        this.reset()
+        }
     }
 }
