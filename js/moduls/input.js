@@ -5,7 +5,10 @@ export class Input{
         'e' : false,
         't' : false,
         "m_pos_x" : undefined,
-        "m_pos_y" : undefined
+        "m_pos_y" : undefined,
+        'noMove' : function(){
+            return !this.d && !this.s && !this.a && !this.w
+        }
 
     }
     constructor(){
@@ -26,13 +29,14 @@ export class Input{
             switch (e.which){
                 case 1:
                     this.inputs.m_left = false
-                    break
+
                 case 3:
                     this.inputs.m_right = false
                     break;
             }
         })
         document.addEventListener(('keydown'), e=>{
+
             switch (e.keyCode){
                 case 69:
                     this.inputs.e = true
@@ -86,4 +90,5 @@ export class Input{
         }
         return flag  ? this.inputs : false
     }
+    
 }

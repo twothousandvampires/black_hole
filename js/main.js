@@ -1,5 +1,11 @@
 import { GameEngine } from "./moduls/game_engine.js"
 
-let game = new GameEngine();
+let start = document.getElementById('start')
 
-game.start();
+start.addEventListener('click', e =>{
+    let game = new GameEngine();
+    game.start();
+})
+
+
+

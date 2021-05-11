@@ -1,16 +1,19 @@
-import { Asteroid } from "../moduls/asteroid_module.js";
+import  { Config } from "./config.js";
+import { Asteroid } from "./asteroid.js";
 import  { Blackhole } from "../moduls/black_hole.js";
-import  { Player } from "../moduls/player_module.js";
-import { Render } from '../moduls/render_module.js'
-import { Skill } from '../moduls/skill_module.js'
+import  { Player } from "./player.js";
+import { Render } from './render.js'
+import { Skill } from './skill.js'
+import {Effect} from "./effect.js";
+import {GameFunctions} from "./game_functions.js";
+
 
 export class GameEngine{
-
+    static self
     constructor(){
         this.black_hole = new Blackhole({x:450, y: 450})
         this.timer = 0
         this.game_tame = setInterval( ()=> {
-
             this.timer ++
             if(this.timer%10 === 0){
                 if(this.astr_create_timer > 0.3){
@@ -23,11 +26,14 @@ export class GameEngine{
                 }
                 
             }
-            if(this.timer%30 === 0 ){
+            if(this.timer%40 === 0 ){
                 this.createAsteroid(true)
             }
+            if(this.timer%10 === 0 ){
+                this.createPowerUp()
+            }
         } , 1000)
-        this.astr_create_timer = 5
+        this.astr_create_timer = 1
         this.render = new Render(this)
         this.player = new Player(this.render)
         this.power_up_array = []
@@ -71,9 +77,6 @@ export class GameEngine{
             return elem != item
         })
     }
-    playerAct(){
-        
-    }
     asteroidAct(){
         for (let i = 0; i < this.asteroinds_mass.length;i ++){
             this.asteroinds_mass[i].move(this.black_hole, this.asteroinds_mass , this.player)
@@ -82,13 +85,41 @@ export class GameEngine{
                 this.deleteAsteroid(this.asteroinds_mass[i])
             }
         }
-       }
+    }
+    power_up_act(player, engine){
+        for( let i = 0 ; i < this.power_up_array.length; i ++){
+            let item = this.power_up_array[i];
+            item.act(player, engine)
+        }
+    }
+    deletePowerUp(item){
+        this.power_up_array = this.power_up_array.filter( elem => {
+            return elem != item
+        })
+    }
+    gameStep(){
+        this.render.drawFrame(this.black_hole, this.asteroinds_mass, this.player, this.power_up_array)
+        this.black_hole.act()
+        this.asteroidAct()
+        this.player.act(this.black_hole , this.asteroinds_mass)
+        this.power_up_act(this.player, this);
+        requestAnimationFrame(() => this.gameStep())
+    }
     start(){
-        setInterval(()=>{
-            this.render.drawFrame(this.black_hole, this.asteroinds_mass, this.player, this.power_up_array)
-            this.black_hole.act()
-            this.asteroidAct()
-            this.player.act(this.black_hole , this.asteroinds_mass)
-        },30)
+        requestAnimationFrame(() => this.gameStep())
+    }
+    createPowerUp(){
+        let x = Math.floor( Math.random() * 900)
+        let y = Math.floor( Math.random()  * 900)
+        while (GameFunctions.distanceBetweenPoints({ pos : { 'x' : x, 'y' : y}}, this.black_hole) < this.black_hole.getTotalRadius()) {
+            x = Math.floor( Math.random() * 900)
+            y = Math.floor( Math.random()  * 900)
+        }
+        this.render.effects.push(new Effect('power up', this.render, { "x" : x, "y": y}, 0))
+        this.power_up_array = []
+        setTimeout( () =>{
+            this.power_up_array.push(new Skill(this.player, Config.list_of_power_ups[Math.floor(Math.random() * Config.list_of_power_ups.length)],this.render, { "x" : x, "y" : y}))
+        },1000)
+
     }
 }

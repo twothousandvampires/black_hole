@@ -30,11 +30,13 @@
         </div>
         <div id = 'game-info'>
             <p id = 'timer'></p>
-            <p id = 'meteor hit count'></p>
-            <p id = 'hit with meteor'></p>
+            <p id = 'mass'></p>
+            <p id = 'accel'></p>
+            <p id = 'cd'></p>
         </div>
     </div>
     <canvas id="cnv" width="900px" height="900px"></canvas>
+    <button id="start">GO</button>
     <script type="module" src="js/main.js"></script>
 </body>
 </html>
