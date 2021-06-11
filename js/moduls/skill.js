@@ -13,6 +13,22 @@ export class Skill{
         this.r = 15
         this.init()       
     }
+
+    check(){
+        console.log(this.count)
+        if(this.count){
+            this.count --;
+            if(this.count === 0){
+                if(this.type === 'left'){
+                    this.player.left = new Skill(this.player , 'gravinado')
+                }
+                else {
+                    this.player[this.type] = undefined
+                }
+            }
+        }
+    }
+
     act(player, engine){
         this.woble_angle += 0.1
         if(this.woble_angle > 2 * Math.PI){
@@ -54,6 +70,8 @@ export class Skill{
                     }
                 break;
             case 'massive wave':
+                this.count = 2
+                this.type = 'power'
                 this.image.src = './resources/pic_mini/massive_wave.png'
                 this.cd = 7500;
                 this.do = function (input, player){
@@ -71,6 +89,8 @@ export class Skill{
                     }
             break;
             case 'space crusher':
+                this.type = 'left'
+                this.count = 8
                 this.image.src = './resources/pic_mini/space_crusher.png'
                 this.cd = 1500;
                 this.do = function (input, player){
@@ -87,10 +107,12 @@ export class Skill{
                         }
                     }
                 this.pickUp = function (player){
-                    player.l_click_item = this
+                    player.left = this
                 }
             break;
             case 'death comet':
+                this.type = 'right'
+                this.count = 3
                 this.image.src = './resources/pic_mini/death_comet.png'
                 this.cd = 10000
                 this.do = function (input, player){
@@ -109,11 +131,12 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.r_click_item = this
+                    player.right = this
                 }
                 break
             case 'defend matrix':
-                this.type = 1
+                this.count = 5
+                this.type = 'left'
                 this.image.src = './resources/pic_mini/dm_mini.png'
                 this.cd = 6000;
                 this.do = function (input, player){
@@ -136,7 +159,7 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.l_click_item = this
+                    player.left = this
                 }
                 break;
             case 'grow mass':
@@ -146,9 +169,11 @@ export class Skill{
                 }
                 break
             case 'dying star':
+                this.count = 1
+                this.type = 'power'
                 this.clickable = false
                 this.cd = 2000
-                    this.charges = 1
+
                     this.image.src = './resources/pic_mini/dying_star.png'
                     this.do = function(input, player){
                         if(this.avalaible){
@@ -169,9 +194,10 @@ export class Skill{
                     }
                     break
             case 'worm hole':
+                this.type = 'power'
+                this.count = 3
                 this.clickable = true
                 this.charges = 2
-                this.type = 1
                 this.image.src = './resources/pic_mini/teleport.png'
                 this.cd = 10000;
                 this.do = function (input, player){
@@ -199,9 +225,10 @@ export class Skill{
                 }
                 break;
             case 'cosmic implosion':
+                this.count = 4
                 this.clickable = true
                 this.charges = 3
-                this.type = 1
+                this.type = 'right'
                 this.image.src = './resources/pic_mini/cosmic_implosion.png'
                 this.cd = 4000;
                 this.do = function (input, player){
@@ -218,13 +245,14 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.r_click_item = this
+                    player.right = this
                 }
                 break;
             case 'frozen rail':
+                this.count = 6
                 this.clickable = true
                 this.charges = 3
-                this.type = 1
+                this.type = 'right'
                 this.image.src = './resources/pic_mini/frozen_rail.png'
                 this.cd = 4000;
                 this.do = function (input, player){
@@ -246,7 +274,7 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.r_click_item = this
+                    player.right = this
                 }
                 break;
             case 'spell power' :

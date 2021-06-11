@@ -115,7 +115,7 @@ export class Projectile {
                     let speed = this.parrent.speed
                     this.parrent.speed = 0
                     this.acted = true
-                    bh.grow(200)
+                    bh.grow(1000)
                     setTimeout(()=>{
                         this.parrent.speed = speed
                     },2000) 

@@ -103,16 +103,26 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
         <div id = 'skill-bar'>
             <div id = 'skill-bar-left'>
                 <p id = 'skill-bar-left-name'></p>
-                <div id = 'skill-bar-left-sign'></div> 
+                <div id = 'skill-bar-left-sign'></div>
+                <p id="l_skill_count"></p>
+            </div>
+            <div id = 'skill-bar-power'>
+                <p id = 'power-name'></p>
+                <p id = 'power-timer'></p>
             </div>
             <div id = 'skill-bar-right'>
                 <div id = 'skill-bar-right-sign'></div> 
-                <p id = 'skill-bar-right-name'></p>                
+                <p id = 'skill-bar-right-name'></p>
+                <p id="r_skill_count"></p>
             </div>
         </div>
         <div id = 'hp-bar'>
+            <div id = 'hp-container'>
+
+            </div>
         </div>
         <div id = 'hud-timer'>
+            <p id = 'timer-count'></p>
         </div>
     </div>
     <div id = 'info'>

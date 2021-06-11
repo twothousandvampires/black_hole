@@ -33,7 +33,9 @@ export class GameEngine{
                     this.createAsteroid(true)
                 }
                 if(timer%10 === 0  && this.timer >= 9){
-                    this.createPowerUp()
+                    if(!document.hidden){
+                        this.createPowerUp()
+                    }
                 }
             }
 

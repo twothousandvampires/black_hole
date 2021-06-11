@@ -7,6 +7,7 @@ import {Render} from './render.js'
 
 
 export class Player{
+
     constructor(engine) {
         this.engine = engine
         this.pos = {
@@ -32,9 +33,9 @@ export class Player{
         this.fliped = false
         this.can_be_attracted = true
         this.projectiles = []
-        this.l_click_item = new Skill(this, 'space crusher', this.render)
-        this.r_click_item = new Skill(this, 'death comet', this.render)
-        this.power = new Skill(this, 'massive wave', this.render)
+        this.left = new Skill(this, 'space crusher')
+        this.right =  undefined
+        this.power = undefined
         // player game images
         this.idle_image = new Image()
         this.idle_image.src = './resources/img/player_idle.png'
@@ -54,7 +55,6 @@ export class Player{
         this.frame_timer = 0
         this.was_hit = false
         this.life = 3
-        
     }
     // make the player immunity to asteroid collision
     getImmunity(time){
@@ -64,7 +64,19 @@ export class Player{
         } ,time * 1000)
     }
     act(bh , ast){
-        
+        // move the projectiles
+        this.projectiles.forEach( elem => {
+            elem.act(ast , bh)
+        })
+
+        if(this.state === 'lose'){
+            return;
+        }
+        if(this.pos.x > 950 ||  this.pos.x < -50 || this.pos.y > 950 ||  this.pos.y < -50){
+            this.state = 'lose'
+            this.engine.createGameOverWindow();
+            return
+        }
         this.woble_angle += 0.1
         if(this.woble_angle > 2 * Math.PI){
             this.woble_angle = 0
@@ -73,18 +85,14 @@ export class Player{
         if(this.frame_timer >= 1){
             this.frame_timer = 0
             this.frame ++
-            if(this.frame == this.max_frame){
+            if(this.frame === this.max_frame){
                 this.frame = 0
             }
         }
-        if(this.state == 'lose'){
-            return
-        }
+
         // get the pressed buttons
         let input = this.input.getInput()
-        this.projectiles.forEach( elem => {
-            elem.act(ast, bh)
-        })
+
         // if left mouse click
         if(input.m_left && !input.e){
             this.leftClick(input)
@@ -96,6 +104,7 @@ export class Player{
         else if(input.e){
             this.powerAbility(input)
         }
+
         let x_move = 0;
         let y_move = 0;
         //etc
@@ -106,8 +115,7 @@ export class Player{
                 this.acceleration.y = -1
             }
         }
-        if(input.s && !this.damaged)  { 
-            
+        if(input.s && !this.damaged)  {
             this.acceleration.y += this.acceleration_step
             if(this.acceleration.y > 1) {
                 this.acceleration.y = 1
@@ -140,11 +148,9 @@ export class Player{
                 this.acceleration.y = 0
             }
             if(this.acceleration.x != 0){
-                x_move = this.acceleration.x
                 this.acceleration.x += this.acceleration.x > 0 ? -this.acceleration_step : this.acceleration_step
             }
             if(this.acceleration.y != 0){
-                y_move = this.acceleration.y
                 this.acceleration.y += this.acceleration.y > 0 ? -this.acceleration_step : this.acceleration_step
             }
 
@@ -155,7 +161,6 @@ export class Player{
                 this.state = 'damage'
                 this.frame_timer = 0
                 this.frame = 0
-                
             }
         }
         else if(this.casted){
@@ -163,7 +168,6 @@ export class Player{
                 this.state = 'cast'
                 this.frame_timer = 0
                 this.frame = 0
-                
             }
         }       
         else if(!input){
@@ -184,13 +188,12 @@ export class Player{
         x_move = this.acceleration.x
         y_move = this.acceleration.y
         //if player is in black hole attracted zone
-        if(bh.intersectEventPlayer(this)){
+        if(bh.intersectEventPlayer(this) && this.can_be_attracted){
             this.engine.createGameOverWindow();
             this.state = 'lose'
             return
         }
         if(bh.intersectPlayer(this) && this.can_be_attracted){
-
             let distance = bh.distanceToEvent(this)
             let power = distance/bh.radius_of_influence
             power = power > 1 ? 1 : power
@@ -266,10 +269,10 @@ export class Player{
     // actions on mouse click
     leftClick(input){
         if(!this.damaged){
-            if(this.l_click_item.avalaible){
+            if(this.left && this.left.avalaible){
                 Render.effects.push(new Effect('after cast', this.pos, 0))
-                this.l_click_item.do(input , this)
-                
+                this.left.do(input , this)
+                this.left.check()
             }
             if(!this.casted){
                 this.casted = true
@@ -282,9 +285,9 @@ export class Player{
 
     rightClick(input){
         if(!this.damaged){
-            if(this.r_click_item){
-                this.r_click_item.do(input , this)
-                
+            if(this.right && this.right.avalaible){
+                this.right.do(input , this)
+                this.right.check()
             }
             if(!this.casted){
                 this.casted = true
@@ -298,14 +301,17 @@ export class Player{
 
     powerAbility(input){
         if(!this.damaged){
-            if(this.power){
+
+            if(this.power && this.power.avalaible){
                 if(this.power.clickable){
                     if(input.m_left){
                         this.power.do(input, this)
+                        this.power.check()
                     }
                 }
                 else{
                     this.power.do(input, this)
+                    this.power.check()
                 }
             }
         }    

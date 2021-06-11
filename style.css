@@ -16,13 +16,14 @@
     flex-direction: column;
 }
 #hud{
+    font-size: 16px;
     top:0;
     background-color: cadetblue;
     position: fixed;
     display: flex;
     flex-direction: column;
     width: 300px;
-    height: 60px;   
+    height: 60px;
 }
 #skill-bar{
     display: flex;
@@ -69,4 +70,9 @@
     position: absolute;
     top:200px;
     left: 500px;
+}
+#hp-box{
+    background-color: red;
+    width : 20px;
+    height: 20px;
 }

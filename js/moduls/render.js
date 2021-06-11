@@ -19,7 +19,6 @@ export class Render{
     }
     // draw full game frame
     static drawFrame(engine){
-    
         // clear
         this.ctx.clearRect(0,0,900,900)
         // background
@@ -49,10 +48,20 @@ export class Render{
 
     static pushInfo(timer, bh , player){
         // draw info about game
-        this.hud_info.l_skill_info.innerText = player.l_click_item.name
-        this.hud_info.r_skill_info.innerText = player.r_click_item ? player.r_click_item.name : ''
-        this.hud_info.l_sign_info.style.backgroundColor = player.l_click_item.avalaible ? 'green' : 'red'
-        this.hud_info.r_sign_info.style.backgroundColor = !player.r_click_item ? 'red' : player.r_click_item.avalaible ? 'green' : "red"
+        this.hud_info.l_skill_info.innerText = player.left.name
+        this.hud_info.r_skill_info.innerText = player.right ? player.right.name : ''
+
+
+
+        this.hud_info.l_sign_info.style.backgroundColor = player.left.avalaible ? 'green' : 'red'
+        this.hud_info.r_sign_info.style.backgroundColor = !player.right ? 'red' : player.right.avalaible ? 'green' : "red"
+
+        this.hud_info.l_skill_count.innerText = !player.left ? '' : player.left.count ? player.left.count : ""
+        this.hud_info.r_skill_count.innerText = !player.right ? '' : player.right.count ? player.right.count : ""
+
+        this.hud_info.power_name.innerText = player.power ? player.power.name : ''
+        this.hud_info.power_timer.innerText = player.power ? player.power.count : ''
+
         this.hud_info.timer.innerText = `timer : ` + Math.round(timer/10)
         this.hud_info.mass_info.innerText = `mass : ` + player.mass
         this.hud_info.acceleration_info.innerText = `accel : ` + player.acceleration_step
@@ -60,6 +69,17 @@ export class Render{
         this.hud_info.bh_power_info.innerText = `bh power : ` + bh.power
         this.hud_info.bh_radius_info.innerText = `bh radius : ` + bh.radius
         this.hud_info.bh_influence_info.innerText = `bh influence : ` + bh.radius_of_influence
+
+        this.hud_info.timer_count.innerText = Math.round(timer/10)
+
+        this.hud_info.hp_container.innerHTML = ''
+        this.hud_info.hp_container.style.backgroundColor = player.was_hit ? "" : 'blue'
+        for(let i = 0; i < player.life; i ++){
+
+            let item = document.createElement('div');
+            item.id = 'hp-box'
+            this.hud_info.hp_container.appendChild(item)
+        }
     }
 
     static drawEffects(bh){

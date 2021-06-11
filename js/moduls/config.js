@@ -34,7 +34,13 @@ export class Config{
         'l_skill_info' : document.getElementById('skill-bar-left-name'),
         'r_skill_info' : document.getElementById('skill-bar-right-name'),
         'l_sign_info' : document.getElementById('skill-bar-left-sign'),
-        'r_sign_info' : document.getElementById('skill-bar-right-sign')
+        'r_sign_info' : document.getElementById('skill-bar-right-sign'),
+        'l_skill_count' : document.getElementById('l_skill_count'),
+        'r_skill_count' : document.getElementById('r_skill_count'),
+        'power_name' : document.getElementById('power-name'),
+        'power_timer' : document.getElementById('power-timer'),
+        'hp_container' : document.getElementById('hp-container'),
+        'timer_count' : document.getElementById('timer-count'),
     }
 
     static getBgImage(){
