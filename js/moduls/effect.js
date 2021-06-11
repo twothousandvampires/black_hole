@@ -1,9 +1,9 @@
+import {Render} from './render.js'
 export class Effect{
 
 
-    constructor(type, parrent, pos, angle){
+    constructor(type, pos, angle){
         this.pos = pos
-        this.parrent = parrent
         this.type = type
         this.frame_timer = 0
         this.frame = 0
@@ -37,6 +37,12 @@ export class Effect{
                 this.radius = 25;
                 this.image.src = "./resources/img/cast_effect.png"
                 break
+            case 'cosmic explosion':
+                this.angle = angle
+                this.max_frame = 22;
+                this.radius = 140;
+                this.image.src = "./resources/img/cosmic_explosion.png"
+                break
         }
     }
 
@@ -48,7 +54,7 @@ export class Effect{
                     this.frame_timer = 0
                     this.frame ++
                     if(this.frame === this.max_frame){
-                        this.parrent.deleteEffect(this)
+                        Render.deleteEffect(this)
                     }
                 }
                 break;
@@ -58,7 +64,7 @@ export class Effect{
                         this.frame_timer = 0
                         this.frame ++
                         if(this.frame === this.max_frame){
-                            this.parrent.deleteEffect(this)
+                            Render.deleteEffect(this)
                         }
                     }
                     break;
@@ -68,7 +74,7 @@ export class Effect{
                     this.frame_timer = 0
                     this.frame ++
                     if(this.frame === this.max_frame){
-                        this.parrent.deleteEffect(this)
+                        Render.deleteEffect(this)
                     }
                 }
                 break;
@@ -78,7 +84,7 @@ export class Effect{
                     this.frame_timer = 0
                     this.frame ++
                     if(this.frame === this.max_frame){
-                        this.parrent.deleteEffect(this)
+                        Render.deleteEffect(this)
                     }
                 }
                 break;
@@ -88,7 +94,17 @@ export class Effect{
                     this.frame_timer = 0
                     this.frame ++
                     if(this.frame === this.max_frame){
-                        this.parrent.deleteEffect(this)
+                        Render.deleteEffect(this)
+                    }
+                }
+                break;
+            case 'cosmic explosion':
+                this.frame_timer += 0.4
+                if(this.frame_timer >=1 ){
+                    this.frame_timer = 0
+                    this.frame ++
+                    if(this.frame === this.max_frame){
+                        Render.deleteEffect(this)
                     }
                 }
                 break;

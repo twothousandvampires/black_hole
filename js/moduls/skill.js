@@ -9,9 +9,9 @@ export class Skill{
         this.name = name
         this.player = player
         this.render = render
-        this.init()
         this.woble_angle = 0;
         this.r = 15
+        this.init()       
     }
     act(player, engine){
         this.woble_angle += 0.1
@@ -28,6 +28,7 @@ export class Skill{
             (thisDistanceY - this.player/2)^2;
 
         if(cornerDistance_sq <= (this.r^2) || thisDistanceX <= (player.width/2) || thisDistanceY <= (player.height/2)) {
+                console.log(this)
                 this.pickUp(player)
                 engine.deletePowerUp((this))
             }
@@ -52,6 +53,43 @@ export class Skill{
                         }
                     }
                 break;
+            case 'massive wave':
+                this.image.src = './resources/pic_mini/massive_wave.png'
+                this.cd = 7500;
+                this.do = function (input, player){
+                    if(this.avalaible){
+                        this.avalaible = false
+                        let new_proj = new Projectile(player, {'x' : player.pos.x, "y" : player.pos.y},0,'massive wave')
+                        player.projectiles.push(new_proj)
+                            setTimeout(()=>{
+                                this.avalaible = true
+                            }, this.cd - player.cd_redaction)
+                        }
+                    }
+                    this.pickUp = function (player){
+                        player.power = this
+                    }
+            break;
+            case 'space crusher':
+                this.image.src = './resources/pic_mini/space_crusher.png'
+                this.cd = 1500;
+                this.do = function (input, player){
+                    if(this.avalaible){
+                        let x = player.pos.x
+                        let y = player.pos.y
+                        this.avalaible = false
+                        let angle = GameFunctions.angle(player, { pos : { "x" : input.m_pos_x, "y" : input.m_pos_y}})
+                        let new_proj = new Projectile(player, {'x' : x + Math.sin(angle) * 60, "y" : y + Math.cos(angle) * 60},angle,'space crusher')
+                        player.projectiles.push(new_proj)
+                            setTimeout(()=>{
+                                this.avalaible = true
+                            }, this.cd - player.cd_redaction)
+                        }
+                    }
+                this.pickUp = function (player){
+                    player.l_click_item = this
+                }
+            break;
             case 'death comet':
                 this.image.src = './resources/pic_mini/death_comet.png'
                 this.cd = 10000
@@ -160,9 +198,72 @@ export class Skill{
                     player.power = this
                 }
                 break;
+            case 'cosmic implosion':
+                this.clickable = true
+                this.charges = 3
+                this.type = 1
+                this.image.src = './resources/pic_mini/cosmic_implosion.png'
+                this.cd = 4000;
+                this.do = function (input, player){
+                    if(this.avalaible){
+                        this.avalaible = false
+                        let x = player.pos.x
+                        let y = player.pos.y
+                        let angle = GameFunctions.angle(player, { pos : { "x" : input.m_pos_x, "y" : input.m_pos_y}})
+                        let item = new Projectile(player, {"x" : x, "y" : y} ,angle, 'cosmic implosion', { "x" : input.m_pos_x, "y" : input.m_pos_y})
+                        player.projectiles.push(item)
+                        setTimeout(() => {
+                            this.avalaible = true
+                        },this.cd - player.cd_redaction)
+                    }
+                }
+                this.pickUp = function (player){
+                    player.r_click_item = this
+                }
+                break;
+            case 'frozen rail':
+                this.clickable = true
+                this.charges = 3
+                this.type = 1
+                this.image.src = './resources/pic_mini/frozen_rail.png'
+                this.cd = 4000;
+                this.do = function (input, player){
+                    if(this.avalaible){
+                        this.avalaible = false
+                        let x = player.pos.x
+                        let y = player.pos.y
+                        let angle = GameFunctions.angle(player, { pos : { "x" : input.m_pos_x, "y" : input.m_pos_y}})
+                        while(x < 900 && x >0 && y < 900 && y >0){
+                            let item = new Projectile(player, {"x" : x + Math.sin(angle) * 30, "y" : y + Math.cos(angle) * 30} ,angle, 'frozen rail')
+                            x += Math.sin(angle) * 30;
+                            y += Math.cos(angle) * 30
+                            player.projectiles.push(item)
+                        }                      
+                        
+                        setTimeout(() => {
+                            this.avalaible = true
+                        },this.cd - player.cd_redaction)
+                    }
+                }
+                this.pickUp = function (player){
+                    player.r_click_item = this
+                }
+                break;
+            case 'spell power' :
+                this.image.src = './resources/pic_mini/spell_power.png'
+                this.pickUp = function (player){
+                    player.spell_power += 10
+                    player.cd_redaction += 100
+                }
+                break
+            case 'improve acceleration' :
+                    this.image.src = './resources/pic_mini/improve_aces.png'
+                    this.pickUp = function (player){
+                        player.acceleration_step += 0.005
+                    }
+                    break
+            }
         }
-        }
-
     }
 
 

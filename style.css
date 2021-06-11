@@ -41,3 +41,32 @@
     width: 20px;
     border: 50%;
 }
+#game_over_window{
+
+    position: absolute;
+    top:100px;
+    left: 45%;
+    width: 200px;
+    height: 50px;
+    background-color: blueviolet;
+
+}
+
+#row_board{
+    display: flex;
+    flex-direction: row;
+}
+#score_board{
+    background-color: burlywood;
+    width: 400px;
+    position: absolute;
+    top:200px;
+    left: 500px;
+}
+#score_board_after{
+    background-color: burlywood;
+    width: 400px;
+    position: absolute;
+    top:200px;
+    left: 500px;
+}

@@ -63,6 +63,21 @@ export class Blackhole{
        
         return (cornerDistance_sq <= (this.getTotalRadius()^2));
     }
+    intersectEventPlayer(item){
+        let thisDistanceX = Math.abs(this.pos.x - item.pos.x);
+        let thisDistanceY = Math.abs(this.pos.y - item.pos.y);
+       
+        if (thisDistanceX > (item.width/2 + this.radius)) { return false; }
+        if (thisDistanceY > (item.height/2 + this.radius)) { return false; }
+       
+        if (thisDistanceX <= (item.width/2)) { return true; }
+        if (thisDistanceY <= (item.height/2)) { return true; }
+       
+       let cornerDistance_sq = (thisDistanceX - item.width/2)^2 +
+        (thisDistanceY - item.height/2)^2;
+       
+        return (cornerDistance_sq <= (this.radius^2));
+    }
     getTotalRadius(){
         return this.radius + this.radius_of_influence
     }

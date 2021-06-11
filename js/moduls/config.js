@@ -9,7 +9,13 @@ export class Config{
         'grow mass',
         'death comet',
         'worm hole',
-        'dying star'
+        'dying star',
+        'frozen rail',
+        'cosmic implosion',
+        'massive wave',
+        'space crusher',
+        'spell power',
+        'improve acceleration'
     ]
 
     static background_image_pull = [
@@ -31,5 +37,9 @@ export class Config{
         'r_sign_info' : document.getElementById('skill-bar-right-sign')
     }
 
-    
+    static getBgImage(){
+        let result = new Image()
+        result.src = Config.background_image_pull[Math.floor(Math.random() * Config.background_image_pull.length)]
+        return result
+    }
 }

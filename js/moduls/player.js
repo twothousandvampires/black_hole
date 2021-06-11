@@ -3,10 +3,12 @@ import { GameFunctions } from "./game_functions.js"
 import  { Skill } from "./skill.js";
 import {Config} from "./config.js";
 import { Effect } from "./effect.js";
+import {Render} from './render.js'
+
 
 export class Player{
-    constructor(render) {
-        this.render = render
+    constructor(engine) {
+        this.engine = engine
         this.pos = {
            "x" : 450,
            "y" : 100  
@@ -18,6 +20,7 @@ export class Player{
         this.woble_angle = 0
         this.immunity = false
         this.cd_redaction = 0
+        this.spell_power = 0
         this.speed = Config.player_speed
         this.mass = Config.player_mass
         this.width = 35
@@ -28,11 +31,10 @@ export class Player{
         this.casted = false
         this.fliped = false
         this.can_be_attracted = true
-        
         this.projectiles = []
-        this.l_click_item = new Skill(this, 'gravinado', this.render)
+        this.l_click_item = new Skill(this, 'space crusher', this.render)
         this.r_click_item = new Skill(this, 'death comet', this.render)
-        this.power = new Skill(this, 'dying star', this.render)
+        this.power = new Skill(this, 'massive wave', this.render)
         // player game images
         this.idle_image = new Image()
         this.idle_image.src = './resources/img/player_idle.png'
@@ -50,6 +52,8 @@ export class Player{
         this.max_frame = 5
         this.frame = 0
         this.frame_timer = 0
+        this.was_hit = false
+        this.life = 3
         
     }
     // make the player immunity to asteroid collision
@@ -60,6 +64,7 @@ export class Player{
         } ,time * 1000)
     }
     act(bh , ast){
+        
         this.woble_angle += 0.1
         if(this.woble_angle > 2 * Math.PI){
             this.woble_angle = 0
@@ -71,6 +76,9 @@ export class Player{
             if(this.frame == this.max_frame){
                 this.frame = 0
             }
+        }
+        if(this.state == 'lose'){
+            return
         }
         // get the pressed buttons
         let input = this.input.getInput()
@@ -176,6 +184,11 @@ export class Player{
         x_move = this.acceleration.x
         y_move = this.acceleration.y
         //if player is in black hole attracted zone
+        if(bh.intersectEventPlayer(this)){
+            this.engine.createGameOverWindow();
+            this.state = 'lose'
+            return
+        }
         if(bh.intersectPlayer(this) && this.can_be_attracted){
 
             let distance = bh.distanceToEvent(this)
@@ -218,6 +231,20 @@ export class Player{
             // if true
             if(cornerDistance_sq <= (element.r^2) || distance_x <= (this.width/2) || distance_y <= (this.height/2)){
                 if(!this.damaged && !this.immunity){
+                    if(!this.was_hit){
+                        this.was_hit = true
+                        setTimeout(() => {
+                            this.was_hit = false
+                        },7000)
+                    }
+                    else{
+                        this.life --
+                        if(this.life == 0){
+                            this.engine.createGameOverWindow()
+                            this.state = 'lose'
+                            return
+                        }
+                    }
                     this.damaged = true
                     let angle = GameFunctions.angle(element, this)
                     let hit_coef = (1 - this.mass/200)
@@ -240,7 +267,7 @@ export class Player{
     leftClick(input){
         if(!this.damaged){
             if(this.l_click_item.avalaible){
-                this.render.effects.push(new Effect('after cast', this.render, this.pos, 0))
+                Render.effects.push(new Effect('after cast', this.pos, 0))
                 this.l_click_item.do(input , this)
                 
             }

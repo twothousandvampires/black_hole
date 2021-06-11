@@ -1,5 +1,6 @@
 import { GameFunctions } from "./game_functions.js"
 import {Effect} from "./effect.js";
+import { Render } from "./render.js";
 
 export class Asteroid{
 
@@ -32,7 +33,8 @@ export class Asteroid{
         this.r = mass/2
         if(this.comet){
             this.r = mass/5
-        }       
+        }
+        this.frozen = false       
     }
     
     reset(){
@@ -48,7 +50,7 @@ export class Asteroid{
     }
     move(bh ,astr){
         // rotate the asteroid depending on the him mass
-        if(!this.comet){
+        if(!this.comet && !this.frozen){
             this.frame_timer += 0.2
             if(this.frame_timer > this.mass/30){
                 this.frame++
@@ -58,7 +60,7 @@ export class Asteroid{
                 }
             }
         }
-        else {
+        else if(this.comet){
             this.frame_timer += 0.5
             if(this.frame_timer > this.mass/300){
                 this.frame++
@@ -72,13 +74,14 @@ export class Asteroid{
         if(bh.intersectEvent(this)){
             if(!this.comet){
                 let a = GameFunctions.angle(this, bh)
-                this.parrent.render.effects.push(new Effect('suction',this.parrent.render ,{ "x" : bh.pos.x - bh.radius, "y" : bh.pos.y - bh.radius} , a))
+                Render.effects.push(new Effect('suction',{ "x" : bh.pos.x - bh.radius, "y" : bh.pos.y - bh.radius} , a))
                 this.parrent.deleteAsteroid(this)
                 bh.grow(this.mass)
             }
             else{
-                this.parrent.deleteAsteroid(this)
                 bh.reduce(this.mass)
+                this.parrent.deleteAsteroid(this)
+                
             }
         }
         // if an asteroid collides with a black hole attracted zone
@@ -123,7 +126,7 @@ export class Asteroid{
         for (let i = 0; i < astr.length; i++) {
             const element = astr[i];
             if(GameFunctions.distanceBetweenPoints(this, element) < (this.r + element.r)){
-                if(this !== element && !this.damaged){
+                if(this !== element && !this.damaged && !this.frozen ){
                     this.changeSpeedFromAstr(element)
                     this.damaged = true
                     let timer = setInterval(()=>{
@@ -148,6 +151,7 @@ export class Asteroid{
     
     changeSpeedFromAstr(element){
         if(!this.comet){
+            
             let hit_angle = this.angle - element.angle
             this.angle -= hit_angle
             if(!element.comet){

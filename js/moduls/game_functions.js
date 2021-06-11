@@ -33,4 +33,14 @@ export class GameFunctions{
     static fixNum(num){
         return +num.toFixed(2)
     }
+
+    static normalizeAngle(angle){
+        if(angle > Math.PI * 2){
+            return angle - Math.PI * 2
+        }
+        if(angle < 0){
+            return Math.PI * 2 + angle
+        }
+        return angle
+    }
 }
