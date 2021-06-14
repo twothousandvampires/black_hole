@@ -125,7 +125,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <p id = 'timer-count'></p>
         </div>
     </div>
-    <div id = 'info'>
+    <!-- <div id = 'info'>
         <div id = 'bh-info'>
             <p id = 'bh-power'></p>
             <p id = 'bh-radius'></p>
@@ -137,7 +137,7 @@ if($_SERVER['REQUEST_METHOD'] === 'POST'){
             <p id = 'accel'></p>
             <p id = 'cd'></p>
         </div>
-    </div>
+    </div> -->
     <canvas id="cnv" width="900px" height="900px" ></canvas>
     <button id="start">GO</button>
     <script type="module" src="js/main.js"></script>

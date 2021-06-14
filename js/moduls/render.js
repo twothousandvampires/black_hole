@@ -62,13 +62,13 @@ export class Render{
         this.hud_info.power_name.innerText = player.power ? player.power.name : ''
         this.hud_info.power_timer.innerText = player.power ? player.power.count : ''
 
-        this.hud_info.timer.innerText = `timer : ` + Math.round(timer/10)
-        this.hud_info.mass_info.innerText = `mass : ` + player.mass
-        this.hud_info.acceleration_info.innerText = `accel : ` + player.acceleration_step
-        this.hud_info.cd_info.innerText = `cd : ` + player.cd_redaction
-        this.hud_info.bh_power_info.innerText = `bh power : ` + bh.power
-        this.hud_info.bh_radius_info.innerText = `bh radius : ` + bh.radius
-        this.hud_info.bh_influence_info.innerText = `bh influence : ` + bh.radius_of_influence
+        // this.hud_info.timer.innerText = `timer : ` + Math.round(timer/10)
+        // this.hud_info.mass_info.innerText = `mass : ` + player.mass
+        // this.hud_info.acceleration_info.innerText = `accel : ` + player.acceleration_step
+        // this.hud_info.cd_info.innerText = `cd : ` + player.cd_redaction
+        // this.hud_info.bh_power_info.innerText = `bh power : ` + bh.power
+        // this.hud_info.bh_radius_info.innerText = `bh radius : ` + bh.radius
+        // this.hud_info.bh_influence_info.innerText = `bh influence : ` + bh.radius_of_influence
 
         this.hud_info.timer_count.innerText = Math.round(timer/10)
 
@@ -208,5 +208,23 @@ export class Render{
                     break;
             }
         })
+    }
+
+    static drawInRowWindow(num){
+
+        let body = document.getElementById('body')
+
+        let window = document.createElement('div')
+
+        window.id = 'in_row_window'
+
+        window.innerText = `${num} in row!`
+
+        body.appendChild(window)
+
+        setTimeout(() => {
+            body.removeChild(window)
+        }, 3000);
+
     }
 }

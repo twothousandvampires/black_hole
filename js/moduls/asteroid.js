@@ -79,6 +79,7 @@ export class Asteroid{
                 bh.grow(this.mass)
             }
             else{
+                this.parrent.player.getScore(1000)
                 bh.reduce(this.mass)
                 this.parrent.deleteAsteroid(this)
                 

@@ -1,3 +1,5 @@
+import { Render } from "./render.js";
+
 let canvas = document.getElementById('cnv')
 let ctx = canvas.getContext('2d')
 
@@ -42,5 +44,26 @@ export class GameFunctions{
             return Math.PI * 2 + angle
         }
         return angle
+    }
+
+    static inRow(num, skill_name, player){
+
+        console.log(skill_name)
+        console.log(player)
+        switch(skill_name){
+            case  'death comet':
+                player.getScore(num * 40)
+                break;
+            case  'worm hole':
+                player.getScore(num * 90)
+                break;
+            case  'dying star':
+                player.getScore(num * 15)
+                break;
+        }
+
+
+        Render.drawInRowWindow(num)
+
     }
 }

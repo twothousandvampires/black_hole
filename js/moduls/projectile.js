@@ -160,22 +160,22 @@ export class Projectile {
                         
                         for(let i = 0; i < asteroids.length; i++){
                             if(GameFunctions.distanceBetweenPoints(this, asteroids[i]) < 140 + asteroids[i].r){
+                                this.parrent.getScore(2)
                                 let speed = asteroids[i].speed
                                 asteroids[i].speed = 0
                                 asteroids[i].angle= GameFunctions.angle(this, asteroids[i])
                                 asteroids[i].reset()
-                                setTimeout(()=> {
-                                    
+                                setTimeout(()=> {                                  
                                     asteroids[i].speed = speed * 4
                                 },2000)
                             }
                             
-                                setTimeout(()=> {
-                                    
+                                setTimeout(()=> {                                 
                                     if(GameFunctions.distanceBetweenPoints(this, this.parrent) < 140){
                                     let angle= GameFunctions.angle(this, this.parrent)
                                     this.parrent.acceleration.x = Math.sin(angle)
                                     this.parrent.acceleration.y = Math.cos(angle)
+                                    this.parrent.getImmunity(1)
                                     }  
                                 },2000)
                             
@@ -215,22 +215,23 @@ export class Projectile {
                         this.frame = 0
                     }
                 }
+                
                 break;
             case 'dying star':               
                 this.frame_timer += 0.15
                 if(this.frame_timer >=1){
                     this.frame_timer = 0
-                    this.frame ++
-                    
+                    this.frame ++                   
                     if(this.frame >= this.max_frame){
+                        let count = 0;
                         function recoursive(item, array , render){
-                            console.log(render)
                             for(let i = 0; i < array.length; i++){
                                 const elem = array[i]
                                 if((GameFunctions.distanceBetweenPoints(item, elem) < 140 + elem.r) && (!elem.destroyed)){
                                     Render.effects.push(new Effect('explosion fire', elem.pos,0))
                                     elem.destroyed = true
-                                    elem.parrent.deleteAsteroid(elem)
+                                    elem.parrent.deleteAsteroid(elem, true)
+                                    count ++;
                                     recoursive(elem, array ,render)                                    
                                 }
                             }
@@ -238,32 +239,42 @@ export class Projectile {
                         }
                         Render.effects.push(new Effect('explosion fire', this.pos,0))
                         recoursive(this, asteroids , this.parrent.render)
-                                      
-                        this.parrent.deleteProj(this)
-                        
+                        if(count > 3){
+                            GameFunctions.inRow(count, this.type, this.parrent)
+                        }     
+                        this.parrent.deleteProj(this)                      
                     }
                 }                
                 break;
         }
 
         asteroids.forEach(element => {
+            
+            let counts = {
+                'wh' : 0,
+                'ds' : 0
+            }
+
             if(GameFunctions.distanceBetweenPoints(this, element) < (this.r + element.r)){
                 switch(this.type){
                     case 'gravinado':
+                        this.parrent.getScore(5)
                         element.angle = this.angle
                         element.reset()
                         this.parrent.deleteProj(this)
                         break;
                     case 'space crusher':
                         if(this.frame <= 6 && this.frame >=2){
+                            this.parrent.getScore(20)
                             element.parrent.asteroinds_mass.push(new Asteroid(element.parrent, {x:element.pos.x, y:element.pos.y}, GameFunctions.normalizeAngle(element.angle + Math.PI/2),element.mass/2, false))
                             element.parrent.asteroinds_mass.push(new Asteroid(element.parrent, {x:element.pos.x, y:element.pos.y}, GameFunctions.normalizeAngle(element.angle - Math.PI/2),element.mass/2, false))
-                            element.parrent.deleteAsteroid(element)
+                            element.parrent.deleteAsteroid(element, true)
                             this.parrent.deleteProj(this)
                         }                           
                         break;
                     case 'frozen rail':
                         if(this.frame === 0 && !element.frozen){
+                            this.parrent.getScore(2)
                             element.frozen = true;
                             let speed = element.speed
                             element.speed = 0
@@ -275,6 +286,7 @@ export class Projectile {
                        
                         break;
                     case 'defend matrix':
+                        this.parrent.getScore(3)
                         element.angle = GameFunctions.angle(this.parrent, element)
                         element.reset()
                         break;
@@ -285,15 +297,18 @@ export class Projectile {
                         break;
                     case 'worm hole':
                         if(this.after_teleport){
+                            let count = 0
                             for(let i = 0; i < asteroids.length; i++){
                                 if(GameFunctions.distanceBetweenPoints(this, asteroids[i]) < 80 + asteroids[i].r){
                                     Render.effects.push(new Effect('explosion', this.pos))
-                                    asteroids[i].parrent.deleteAsteroid(asteroids[i])
+                                    asteroids[i].parrent.deleteAsteroid(asteroids[i], true)
+                                    counts.wh ++
                                 }
                             }
                         }
                         break;
                     case 'death comet':
+                        let count = 0
                         let explosion_point = {
                             pos: {
                                 "x" : this.pos.x + Math.sin(GameFunctions.angle(this,element)),
@@ -304,11 +319,18 @@ export class Projectile {
                         Render.effects.push(new Effect('explosion fire', {"x":explosion_point.pos.x, "y":explosion_point.pos.y}))
                         for(let i = 0; i < asteroids.length; i++){
                             if(GameFunctions.distanceBetweenPoints(explosion_point, asteroids[i]) < 80 + asteroids[i].r){
-                                asteroids[i].parrent.deleteAsteroid(asteroids[i])
+                                asteroids[i].parrent.deleteAsteroid(asteroids[i], true)
+                                counts.ds ++
                             }
                         }
                         break;
                 }
+            }
+            if(counts.wh > 3){
+                GameFunctions.inRow(counts.wh , 'worm hole', this.parrent)
+            }
+            if(counts.ds > 3){
+                GameFunctions.inRow(counts.ds , 'death comet', this.parrent)
             }
         });
         if(this.type !== 'defend matrix' && this.type !== 'worm hole' && this.type !== 'dying star' && this.type !== 'frozen rail' && this.type !== 'massive wave' && this.type !== 'space crusher'){

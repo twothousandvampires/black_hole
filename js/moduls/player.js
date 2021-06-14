@@ -9,6 +9,7 @@ import {Render} from './render.js'
 export class Player{
 
     constructor(engine) {
+        this.score = 0
         this.engine = engine
         this.pos = {
            "x" : 450,
@@ -321,5 +322,9 @@ export class Player{
         this.projectiles = this.projectiles.filter( elem => {            
             return elem != item
         })
+    }
+    getScore(num){
+        console.log(num)
+        this.score += num
     }
 }

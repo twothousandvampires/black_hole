@@ -15,7 +15,8 @@ export class Config{
         'massive wave',
         'space crusher',
         'spell power',
-        'improve acceleration'
+        'improve acceleration',
+        'add scores'
     ]
 
     static background_image_pull = [
@@ -24,13 +25,13 @@ export class Config{
     ]
 
     static hud_info = {
-        'timer' : document.getElementById('timer'),
-        'mass_info' : document.getElementById('mass'),
-        'acceleration_info' : document.getElementById('accel'),
-        'cd_info' : document.getElementById('cd'),
-        'bh_power_info' : document.getElementById('bh-power'),
-        'bh_radius_info' : document.getElementById('bh-radius'),
-        'bh_influence_info' : document.getElementById('bh-influence'),
+        // 'timer' : document.getElementById('timer'),
+        // 'mass_info' : document.getElementById('mass'),
+        // 'acceleration_info' : document.getElementById('accel'),
+        // 'cd_info' : document.getElementById('cd'),
+        // 'bh_power_info' : document.getElementById('bh-power'),
+        // 'bh_radius_info' : document.getElementById('bh-radius'),
+        // 'bh_influence_info' : document.getElementById('bh-influence'),
         'l_skill_info' : document.getElementById('skill-bar-left-name'),
         'r_skill_info' : document.getElementById('skill-bar-right-name'),
         'l_sign_info' : document.getElementById('skill-bar-left-sign'),

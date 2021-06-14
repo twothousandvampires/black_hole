@@ -85,7 +85,13 @@ export class Skill{
                         }
                     }
                     this.pickUp = function (player){
-                        player.power = this
+                        if(player.power && player.power.name === this.name){
+                            player.power.count ++;
+                        }
+                        else{
+                            player.power = this
+                        }
+                        player.getScore(5)                     
                     }
             break;
             case 'space crusher':
@@ -107,7 +113,13 @@ export class Skill{
                         }
                     }
                 this.pickUp = function (player){
-                    player.left = this
+                    if(player.left.name === this.name){
+                        player.left.count += 4;
+                    }
+                    else{
+                        player.left = this
+                    }
+                    player.getScore(10)      
                 }
             break;
             case 'death comet':
@@ -131,7 +143,13 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.right = this
+                    if(player.right && player.right.name === this.name){
+                        player.right.count += 2;
+                    }
+                    else{
+                        player.right = this
+                    }
+                    player.getScore(15)    
                 }
                 break
             case 'defend matrix':
@@ -159,13 +177,26 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.left = this
+                    if(player.left && player.left.name === this.name){
+                        player.left.count += 3;
+                    }
+                    else{
+                        player.left = this
+                    }
+                    player.getScore(5) 
                 }
                 break;
             case 'grow mass':
                 this.image.src = './resources/pic_mini/mass_up.png'
                 this.pickUp = function (player){
                     player.mass += 10
+                    player.getScore(25)
+                }
+                break
+            case 'add scores':
+                this.image.src = './resources/pic_mini/add_scores.png'
+                this.pickUp = function (player){
+                    player.getScore(225)
                 }
                 break
             case 'dying star':
@@ -190,8 +221,15 @@ export class Skill{
                         
                     }
                     this.pickUp = function (player){
-                        player.power = this
+                        if(player.power && player.power.name === this.name){
+                            player.power.count ++;
+                        }
+                        else{
+                            player.power = this
+                        } 
+                        player.getScore(15)
                     }
+                    
                     break
             case 'worm hole':
                 this.type = 'power'
@@ -221,7 +259,13 @@ export class Skill{
 
                 }
                 this.pickUp = function (player){
-                    player.power = this
+                    if(player.power && player.power.name === this.name){
+                        player.power.count ++;
+                    }
+                    else{
+                        player.power = this
+                    }
+                    player.getScore(15) 
                 }
                 break;
             case 'cosmic implosion':
@@ -245,7 +289,13 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.right = this
+                    if(player.right && player.right.name === this.name){
+                        player.power.count +=2;
+                    }
+                    else{
+                        player.right = this
+                    }
+                    player.getScore(15) 
                 }
                 break;
             case 'frozen rail':
@@ -274,7 +324,13 @@ export class Skill{
                     }
                 }
                 this.pickUp = function (player){
-                    player.right = this
+                    if(player.right && player.right.name === this.name){
+                        player.right.count ++;
+                    }
+                    else{
+                        player.right = this
+                    }
+                    player.getScore(15) 
                 }
                 break;
             case 'spell power' :
@@ -282,12 +338,23 @@ export class Skill{
                 this.pickUp = function (player){
                     player.spell_power += 10
                     player.cd_redaction += 100
+                    if(player.power){
+                        player.power.count ++;
+                    }
+                    if(player.right){
+                        player.right.count +=2;
+                    }
+                    if(player.left && player.left.count){
+                        player.left.count ++;
+                    }
+                    player.getScore(25)
                 }
                 break
             case 'improve acceleration' :
                     this.image.src = './resources/pic_mini/improve_aces.png'
                     this.pickUp = function (player){
                         player.acceleration_step += 0.005
+                        player.getScore(25)
                     }
                     break
             }

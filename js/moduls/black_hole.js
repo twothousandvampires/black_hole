@@ -29,9 +29,9 @@ export class Blackhole{
     }
     grow(mass){
         console.log("!")
-        this.radius = GameFunctions.fixNum(this.radius + mass/90)
-        this.radius_of_influence = GameFunctions.fixNum(this.radius_of_influence + mass/90)
-        this.power = GameFunctions.fixNum(this.power + mass/2500)
+        this.radius = GameFunctions.fixNum(this.radius + mass/25)
+        this.radius_of_influence = GameFunctions.fixNum(this.radius_of_influence + mass/40)
+        this.power = GameFunctions.fixNum(this.power + mass/2000)
     }
     reduce(mass){
         this.radius = GameFunctions.fixNum( this.radius - mass/50)
